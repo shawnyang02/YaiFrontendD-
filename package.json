@@ -2,6 +2,7 @@
   "name": "yaifrontend",
   "version": "1.0.0",
   "description": "Yai Frontend Project",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "webpack serve --mode development",
