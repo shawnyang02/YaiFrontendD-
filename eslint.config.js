@@ -1,40 +1,36 @@
-import eslintPluginReact from 'eslint-plugin-react';
-import eslintPluginPrettier from 'eslint-plugin-prettier';
-import eslintConfigPrettier from 'eslint-config-prettier';
-import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import typescriptEslintParser from '@typescript-eslint/parser';
-
+// ESLint 配置 - 使用 ESLint 9.x 新格式
 export default [
   {
-    ignores: ['node_modules/', 'dist/', '*.config.js'],
+    // 全局忽略配置
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      '*.config.js',
+      'coverage/**'
+    ],
   },
   {
     files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
-      parser: typescriptEslintParser,
+      ecmaVersion: 2020,
+      sourceType: 'module',
       parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
         ecmaFeatures: {
           jsx: true,
         },
       },
     },
-    plugins: {
-      react: eslintPluginReact,
-      '@typescript-eslint': typescriptEslint,
-      prettier: eslintPluginPrettier,
-    },
     rules: {
-      'prettier/prettier': 'error',
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off',
-    },
-    settings: {
-      react: {
-        version: 'detect',
-      },
+      // 基础规则
+      'no-unused-vars': 'off', // 由 TypeScript 处理
+      'no-console': 'warn',
+      'prefer-const': 'error',
+      'no-var': 'error',
+      
+      // 代码质量
+      'eqeqeq': 'error',
+      'no-duplicate-imports': 'error',
     },
   },
-  eslintConfigPrettier,
 ];
