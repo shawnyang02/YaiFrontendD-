@@ -1,103 +1,115 @@
-# 部署和预览链接配置指南
+# GitHub Pages 部署和预览链接配置指南
 
-本项目支持多种预览链接生成方案，您可以根据需要选择合适的方案。
+本项目使用 GitHub Pages 实现自动化部署和预览链接生成。
 
-## 🚀 方案对比
+## 🚀 功能特性
 
-| 方案 | 优势 | 劣势 | 配置复杂度 |
-|------|------|------|------------|
-| **GitHub Pages** | 免费、与 GitHub 集成好 | 只支持静态站点、有使用限制 | ⭐⭐ |
-| **Surge.sh** | 快速部署、简单易用 | 免费版有限制 | ⭐ |
-| **Vercel** | 性能最佳、功能最全 | 免费版有带宽限制 | ⭐⭐⭐ |
+- ✅ **Pull Request 预览**: 每个 PR 自动生成独立的预览链接
+- ✅ **自动评论**: 在 PR 中自动添加预览链接评论
+- ✅ **生产部署**: 主分支推送时自动部署到生产环境
+- ✅ **零配置**: 无需额外的 Token 或密钥配置
 
 ## 📋 配置步骤
 
-### 方案一：GitHub Pages（推荐新手）
+### 1. 启用 GitHub Pages
 
-1. **启用 GitHub Pages**
-   - 进入仓库 Settings → Pages
-   - Source 选择 "GitHub Actions"
+1. **进入仓库设置**
+   - 打开 GitHub 仓库页面
+   - 点击 `Settings` 选项卡
 
-2. **无需额外配置**
-   - 已在 `.github/workflows/ci-cd.yml` 中配置
-   - PR 时自动生成预览链接
-   - 主分支推送时部署到生产环境
+2. **配置 Pages 设置**
+   - 在左侧菜单中找到 `Pages`
+   - Source 选择 `GitHub Actions`
+   - 保存设置
 
-### 方案二：Surge.sh（推荐快速部署）
+### 2. 推送代码触发部署
 
-1. **获取 Surge Token**
-   ```bash
-   npm install -g surge
-   surge login
-   surge token
-   ```
+项目已配置完整的 CI/CD 流程：
 
-2. **配置 GitHub Secrets**
-   - 仓库 Settings → Secrets and variables → Actions
-   - 添加 `SURGE_TOKEN`
-
-3. **启用 Workflow**
-   - 重命名 `surge-deploy.yml.disabled` → `surge-deploy.yml`（如果存在）
-
-### 方案三：Vercel（推荐生产环境）
-
-1. **获取 Vercel Token**
-   - 访问 [Vercel Dashboard](https://vercel.com/account/tokens)
-   - 创建新的 Token
-
-2. **配置 GitHub Secrets**
-   - 添加 `VERCEL_TOKEN`
-
-3. **启用 Workflow**
-   - 重命名 `vercel-deploy.yml.disabled` → `vercel-deploy.yml`（如果存在）
-
-## 🔧 高级配置
-
-### 自定义域名（Vercel）
-
-在 `vercel.json` 中添加：
-```json
-{
-  "alias": ["your-domain.com", "www.your-domain.com"]
-}
+```yaml
+# .github/workflows/ci-cd.yml 已包含以下功能：
+- 代码检查和构建
+- PR 预览部署
+- 生产环境部署
 ```
-
-### 环境变量配置
-
-在各平台配置环境变量：
-- **GitHub Pages**: 在 workflow 中设置
-- **Surge.sh**: 通过 GitHub Secrets
-- **Vercel**: 在 Vercel Dashboard 中配置
 
 ## 📱 预览链接格式
 
-- **GitHub Pages**: `https://username.github.io/repo-name/pr-123/`
-- **Surge.sh**: `https://repo-name-pr-123.surge.sh`
-- **Vercel**: `https://repo-name-git-branch-username.vercel.app`
+- **PR 预览**: `https://username.github.io/repo-name/pr-123/`
+- **生产环境**: `https://username.github.io/repo-name/`
+
+## 🔧 工作流程
+
+### Pull Request 流程
+1. 创建 PR 或推送到 PR 分支
+2. 自动触发构建和部署
+3. 在 PR 中自动添加预览链接评论
+4. 每次推送都会更新预览
+
+### 生产部署流程
+1. 合并 PR 到 `main` 分支
+2. 自动触发生产环境部署
+3. 更新 `https://username.github.io/repo-name/`
 
 ## 🛠️ 故障排除
 
 ### 构建失败
-1. 检查 Node.js 版本兼容性
-2. 确认所有依赖已正确安装
-3. 查看构建日志中的错误信息
+1. **检查构建日志**
+   - 进入 Actions 选项卡查看详细错误
+   - 常见问题：依赖安装失败、TypeScript 类型错误
+
+2. **本地验证**
+   ```bash
+   pnpm install
+   pnpm lint
+   pnpm build:prod
+   ```
 
 ### 预览链接无法访问
-1. 确认部署状态为成功
-2. 检查路由配置（SPA 应用需要配置 fallback）
-3. 验证静态资源路径是否正确
+1. **检查 Pages 设置**
+   - 确认 Source 设置为 `GitHub Actions`
+   - 检查是否有自定义域名冲突
 
-### Token 权限问题
-1. 确认 Token 有足够权限
-2. 检查 Token 是否过期
-3. 重新生成并更新 Secrets
+2. **检查部署状态**
+   - 在 Actions 中查看 `deploy-preview` 任务状态
+   - 确认 `peaceiris/actions-gh-pages` 执行成功
 
-## 📚 相关文档
+### 权限问题
+1. **GITHUB_TOKEN 权限**
+   - 默认 Token 应该有足够权限
+   - 如果失败，检查仓库的 Actions 权限设置
 
+## 📚 技术实现
+
+### Webpack 配置优化
+- 生产环境代码分割和压缩
+- 静态资源优化和缓存策略
+- SPA 路由支持 (`historyApiFallback`)
+
+### GitHub Actions 配置
+- 多阶段构建流程
+- 构建产物缓存和传递
+- 条件部署（PR vs 生产）
+
+## 🔍 监控和维护
+
+### 检查部署状态
+```bash
+# 运行配置检查脚本
+pnpm setup:deploy
+```
+
+### 清理旧的预览部署
+GitHub Pages 会自动管理部署历史，但如果需要手动清理：
+1. 进入 `gh-pages` 分支
+2. 删除不需要的 `pr-*` 目录
+
+## 📖 相关文档
+
+- [GitHub Pages 官方文档](https://docs.github.com/en/pages)
 - [GitHub Actions 文档](https://docs.github.com/en/actions)
-- [Surge.sh 文档](https://surge.sh/help/)
-- [Vercel 文档](https://vercel.com/docs)
+- [peaceiris/actions-gh-pages](https://github.com/peaceiris/actions-gh-pages)
 
 ## 🤝 贡献
 
-如果您有更好的部署方案或发现问题，欢迎提交 Issue 或 PR。
+如果您发现问题或有改进建议，欢迎提交 Issue 或 PR。

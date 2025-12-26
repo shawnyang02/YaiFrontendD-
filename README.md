@@ -18,18 +18,22 @@ pnpm build:prod
 pnpm setup:deploy
 ```
 
-## 📦 预览链接功能
+## 📦 GitHub Pages 预览功能
 
 本项目已配置自动化 CI/CD 流程，支持：
 
 - ✅ **Pull Request 预览**: 每个 PR 自动生成预览链接
-- ✅ **多平台部署**: 支持 GitHub Pages、Surge.sh、Vercel
+- ✅ **GitHub Pages 部署**: 免费、零配置的静态站点托管
 - ✅ **自动评论**: 在 PR 中自动添加预览链接评论
 - ✅ **生产部署**: 主分支自动部署到生产环境
 
-### 配置说明
+### 使用方法
 
-详细配置步骤请查看 [DEPLOYMENT.md](./DEPLOYMENT.md)
+1. **启用 GitHub Pages**: 仓库 Settings → Pages → Source 选择 "GitHub Actions"
+2. **创建 PR**: 推送代码并创建 Pull Request
+3. **获取预览**: 在 PR 评论中查看自动生成的预览链接
+
+预览链接格式: `https://username.github.io/repo-name/pr-123/`
 
 ## 🛠️ 技术栈
 
