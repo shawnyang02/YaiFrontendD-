@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [ main, master ]
 
+# 添加权限配置
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -50,6 +57,9 @@ jobs:
     if: github.event_name == 'pull_request'
     
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
     - name: Check build status
       run: |
         echo "Build job completed successfully"
@@ -106,6 +116,9 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
