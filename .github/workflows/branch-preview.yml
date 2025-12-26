@@ -1,0 +1,62 @@
+name: Branch Preview Deploy
+
+on:
+  push:
+    branches-ignore: [ main, master ]
+
+jobs:
+  build-and-preview:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Install pnpm
+      run: npm install -g pnpm
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Lint code
+      run: pnpm lint
+
+    - name: Format code
+      run: pnpm format
+
+    - name: Build project
+      run: pnpm build:prod
+
+    - name: Deploy branch preview
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        destination_dir: branch-${{ github.ref_name }}
+
+    - name: Create deployment status
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const branchName = context.ref.replace('refs/heads/', '');
+          const repoName = context.repo.repo;
+          const owner = context.repo.owner;
+          const previewUrl = `https://${owner}.github.io/${repoName}/branch-${branchName}/`;
+          
+          console.log(`Branch: ${branchName}`);
+          console.log(`Preview URL: ${previewUrl}`);
+          
+          // 创建 commit status
+          github.rest.repos.createCommitStatus({
+            owner: owner,
+            repo: repoName,
+            sha: context.sha,
+            state: 'success',
+            target_url: previewUrl,
+            description: `预览部署成功 - ${branchName}`,
+            context: 'deploy/branch-preview'
+          });

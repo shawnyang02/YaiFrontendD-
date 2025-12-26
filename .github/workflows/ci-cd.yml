@@ -50,12 +50,24 @@ jobs:
     if: github.event_name == 'pull_request'
     
     steps:
+    - name: Check build status
+      run: |
+        echo "Build job completed successfully"
+        echo "PR Number: ${{ github.event.number }}"
+        echo "Repository: ${{ github.repository }}"
+        echo "Event: ${{ github.event_name }}"
+    
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
         name: build-artifacts
         path: dist/
 
+    - name: List build artifacts
+      run: |
+        echo "Build artifacts content:"
+        ls -la dist/
+        
     - name: Deploy to GitHub Pages (Preview)
       uses: peaceiris/actions-gh-pages@v4
       with:
@@ -72,11 +84,20 @@ jobs:
           const owner = context.repo.owner;
           const previewUrl = `https://${owner}.github.io/${repoName}/pr-${prNumber}/`;
           
+          console.log(`Creating comment for PR #${prNumber}`);
+          console.log(`Preview URL: ${previewUrl}`);
+          
           github.rest.issues.createComment({
             issue_number: prNumber,
             owner: owner,
             repo: repoName,
-            body: `🚀 **预览链接已生成**\n\n📱 预览地址: ${previewUrl}\n\n构建时间: ${new Date().toLocaleString('zh-CN')}`
+            body: `🚀 **预览链接已生成**
+
+📱 预览地址: ${previewUrl}
+🕐 构建时间: ${new Date().toLocaleString('zh-CN')}
+📦 构建状态: ✅ 成功
+
+> 预览链接通常需要 1-2 分钟生效，请稍等片刻后访问。`
           });
 
   deploy-production:
