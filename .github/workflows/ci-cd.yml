@@ -97,17 +97,21 @@ jobs:
           console.log(`Creating comment for PR #${prNumber}`);
           console.log(`Preview URL: ${previewUrl}`);
           
+          const commentBody = [
+            '🚀 **预览链接已生成**',
+            '',
+            `📱 预览地址: ${previewUrl}`,
+            `🕐 构建时间: ${new Date().toLocaleString('zh-CN')}`,
+            '📦 构建状态: ✅ 成功',
+            '',
+            '> 预览链接通常需要 1-2 分钟生效，请稍等片刻后访问。'
+          ].join('\n');
+          
           github.rest.issues.createComment({
             issue_number: prNumber,
             owner: owner,
             repo: repoName,
-            body: `🚀 **预览链接已生成**
-
-📱 预览地址: ${previewUrl}
-🕐 构建时间: ${new Date().toLocaleString('zh-CN')}
-📦 构建状态: ✅ 成功
-
-> 预览链接通常需要 1-2 分钟生效，请稍等片刻后访问。`
+            body: commentBody
           });
 
   deploy-production:
