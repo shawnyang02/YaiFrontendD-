@@ -1,0 +1,39 @@
+# 依赖目录
+node_modules/
+dist/
+build/
+
+# 配置文件
+*.config.js
+webpack.config.js
+eslint.config.js
+
+# 日志文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 临时文件
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 版本控制
+.git/
+.gitignore
+
+# 文档
+CHANGELOG.md
+LICENSE
+
+# 打包文件
+*.tgz
+*.tar.gz
+
+# 特殊格式文件
+*.min.js
+*.min.css
